@@ -1,0 +1,50 @@
+---
+import Header from "../components/header.astro";
+import Footer from "../components/footer.astro";
+import '../styles/global.css'
+
+interface Props {
+  title?: String;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Header />
+    <div id="page">
+      <slot />
+    </div>
+    <Footer />
+  </body>
+</html>
+
+<!-- Stilos globales -->
+<style is:global>
+  :root {
+    --verde-selva: #1a4d2e;
+    --naranja-tierra: #d4a373;
+    --font-brand: "Montserrat", sans-serif;
+    --font-elegant: "Playfair Display", serif;
+  }
+  h1,
+  .font-brand {
+    font-family: var(--font-brand);
+    letter-spacing: -0.05em;
+  }
+
+  .font-serif {
+    font-family: var(--font-elegant);
+  }
+</style>
