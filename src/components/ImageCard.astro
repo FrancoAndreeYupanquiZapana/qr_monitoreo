@@ -1,0 +1,125 @@
+---
+interface Props {
+  title: string;
+  description: string | null;
+  url: string;
+  category: string;
+}
+
+const { title, description, url, category } = Astro.props;
+
+// Function to handle download (will be handled by a client-side script)
+const filename = url.split('/').pop() || 'download';
+---
+
+<div class="group relative overflow-hidden rounded-2xl bg-zinc-900/50 border border-zinc-800 transition-all duration-300 hover:border-emerald-500/50 hover:shadow-[0_0_30px_-10px_rgba(16,185,129,0.3)] flex flex-col h-full">
+  <div class="relative aspect-[4/5] overflow-hidden">
+    <img 
+      src={url} 
+      alt={title || 'Imagen de la galería'} 
+      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+      loading="lazy"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-80"></div>
+    
+    <div class="absolute top-4 right-4">
+      <span class="px-3 py-1 text-xs font-medium uppercase tracking-wider text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 rounded-full backdrop-blur-sm">
+        {category}
+      </span>
+    </div>
+
+    <!-- Quick View Overlay (Mobile friendly view button) -->
+    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <a 
+        href={url} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="p-3 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-white hover:bg-white/20 transition-all transform scale-90 group-hover:scale-100"
+        title="Ver imagen completa"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="p-5 flex flex-col flex-grow">
+    <div class="mb-4">
+      <h3 class="text-xl font-semibold text-white mb-2 line-clamp-1 group-hover:text-emerald-400 transition-colors">
+        {title || 'Sin título'}
+      </h3>
+      <p class="text-zinc-400 text-sm line-clamp-2 leading-relaxed">
+        {description || 'Capturando la esencia de la biodiversidad en Ronap.'}
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 mt-auto pt-4 border-t border-zinc-800/50">
+      <a 
+        href={url} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-zinc-300 bg-zinc-800/50 hover:bg-zinc-800 hover:text-white rounded-xl transition-all duration-300"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+        Ver
+      </a>
+      <button 
+        data-download-url={url} 
+        data-filename={filename}
+        class="download-btn inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl transition-all duration-300 active:scale-95 shadow-sm hover:shadow-emerald-500/20"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+        Descargar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Handle direct downloads
+  const downloadButtons = document.querySelectorAll('.download-btn');
+  
+  downloadButtons.forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const button = e.currentTarget as HTMLButtonElement;
+      const url = button.getAttribute('data-download-url');
+      const filename = button.getAttribute('data-filename') || 'imagen-ronap.jpg';
+      
+      if (!url) return;
+      
+      const originalContent = button.innerHTML;
+      
+      try {
+        // Visual feedback
+        button.disabled = true;
+        button.innerHTML = '<svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>...';
+        
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up
+        window.URL.revokeObjectURL(blobUrl);
+      } catch (error) {
+        console.error('Error downloading image:', error);
+        // Fallback to direct link if fetch fails
+        window.open(url, '_blank');
+      } finally {
+        button.disabled = false;
+        button.innerHTML = originalContent;
+      }
+    });
+  });
+</script>
+
+<style>
+  img {
+    view-transition-name: gallery-image;
+  }
+</style>
