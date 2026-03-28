@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import logo_ronap from "../assets/logoronap.png";
 ---
 
@@ -8,7 +9,7 @@ import logo_ronap from "../assets/logoronap.png";
     <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16 max-w-6xl mx-auto">
       <!--primera columna -->
       <div class="space-y-6 flex flex-col items-center md:items-start">
-        <img src={logo_ronap.src} alt="RONAP Logo" class="h-40 w-auto m-auto" />
+        <Image src={logo_ronap} alt="RONAP Logo" class="h-40 w-auto m-auto" width={160} />
         <p class="text-gray-400 text-sm leading-relaxed text-center md:text-left">
           Conservamos la Amazonía protegiendo la fauna silvestre en los bosques
           de castaña de Madre de Dios. Una iniciativa de socios castañeros
