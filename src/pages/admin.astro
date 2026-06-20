@@ -1,0 +1,933 @@
+---
+import Layout from "../layouts/layout.astro";
+---
+
+<Layout title="RONAP - Panel de Administración">
+  <main
+    class="min-h-screen bg-zinc-950 pt-24 pb-16 px-4 sm:px-6 lg:px-8 text-white"
+  >
+    <!-- Contenedor Principal de Autenticación -->
+    <div
+      id="login-container"
+      class="max-w-md mx-auto mt-12 bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden"
+    >
+      <div
+        class="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"
+      >
+      </div>
+      <div
+        class="absolute -bottom-10 -left-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"
+      >
+      </div>
+
+      <div class="text-center mb-8 relative">
+        <h2 class="text-3xl font-bold tracking-tight text-white mb-2">
+          Panel Admin
+        </h2>
+        <p class="text-zinc-400 text-sm">
+          Ingresa tus credenciales para gestionar la galería
+        </p>
+      </div>
+
+        <form id="login-form" class="space-y-6 relative">
+        <div>
+          <label
+            for="email"
+            class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2"
+            >Correo Electrónico</label
+          >
+          <input
+            type="email"
+            id="email"
+            required
+            class="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 focus:border-emerald-500 focus:outline-none text-white placeholder-zinc-500 transition-all"
+            placeholder="admin@ronap.org"
+          />
+        </div>
+
+        <div>
+          <label
+            for="password"
+            class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2"
+            >Contraseña</label
+          >
+          <input
+            type="password"
+            id="password"
+            required
+            class="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 focus:border-emerald-500 focus:outline-none text-white placeholder-zinc-500 transition-all"
+            placeholder="••••••••"
+          />
+        </div>
+
+        <div
+          id="login-error"
+          class="hidden text-red-500 text-sm bg-red-950/30 border border-red-500/30 rounded-xl p-3 text-center"
+        >
+          Credenciales incorrectas. Intenta de nuevo.
+        </div>
+
+        <button
+          type="submit"
+          id="login-btn"
+          class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] transition-all rounded-xl font-medium shadow-lg hover:shadow-emerald-500/25 flex items-center justify-center gap-2"
+        >
+          <span>Acceder al Panel</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Contenedor del Dashboard (Oculto por defecto) -->
+    <div id="dashboard-container" class="hidden max-w-7xl mx-auto space-y-8">
+      <!-- Header Dashboard -->
+      <div
+        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-zinc-900/40 p-6 rounded-3xl border border-zinc-800"
+      >
+        <div>
+          <h1 class="text-3xl font-bold tracking-tight">Panel de Control</h1>
+          <p class="text-zinc-400 text-sm mt-1">
+            Sube, edita y elimina fotos de la galería
+          </p>
+        </div>
+        <button
+          id="logout-btn"
+          class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 hover:text-red-400 rounded-xl font-medium transition-all text-sm flex items-center gap-2 border border-zinc-700"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            ><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline
+              points="16 17 21 12 16 7"></polyline><line
+              x1="21"
+              x2="9"
+              y1="12"
+              y2="12"></line></svg
+          >
+          Cerrar Sesión
+        </button>
+      </div>
+
+      <!-- Sección Principal: Formulario y Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Formulario de Subida -->
+        <div
+          class="lg:col-span-1 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl h-fit sticky top-28"
+        >
+          <h2
+            class="text-xl font-semibold mb-6 flex items-center gap-2 text-emerald-400"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+              ></path><polyline points="17 8 12 3 7 8"></polyline><line
+                x1="12"
+                x2="12"
+                y1="3"
+                y2="15"></line></svg
+            >
+            Subir Nueva Imagen
+          </h2>
+
+          <form id="upload-form" class="space-y-5">
+            <div>
+              <label
+                for="img-name"
+                class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2"
+                >Nombre / Título</label
+              >
+              <input
+                type="text"
+                id="img-name"
+                required
+                class="w-full px-4 py-3 rounded-xl bg-zinc-800/40 border border-zinc-800 focus:border-emerald-500 focus:outline-none text-white transition-all text-sm"
+                placeholder="Ej. Tocon colorado en rama"
+              />
+            </div>
+
+            <div>
+              <label
+                for="img-desc"
+                class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2"
+                >Descripción</label
+              >
+              <textarea
+                id="img-desc"
+                rows="3"
+                class="w-full px-4 py-3 rounded-xl bg-zinc-800/40 border border-zinc-800 focus:border-emerald-500 focus:outline-none text-white transition-all text-sm resize-none"
+                placeholder="Breve descripción del elemento capturado..."
+              ></textarea>
+            </div>
+
+            <div>
+              <label
+                for="img-category"
+                class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2"
+                >Categoría</label
+              >
+              <select
+                id="img-category"
+                class="w-full px-4 py-3 rounded-xl bg-zinc-800/40 border border-zinc-800 focus:border-emerald-500 focus:outline-none text-white transition-all text-sm"
+              >
+                <option value="wallpaper" selected>Wallpaper</option>
+                <option value="camara trampa">Cámara Trampa</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2"
+                >Archivo de Imagen</label
+              >
+              <div
+                class="relative border-2 border-dashed border-zinc-800 hover:border-emerald-500/50 rounded-2xl p-6 text-center cursor-pointer transition-all bg-zinc-800/10 group"
+                id="dropzone"
+              >
+                <input
+                  type="file"
+                  id="img-file"
+                  accept="image/*"
+                  required
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                <div class="space-y-2 pointer-events-none">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="mx-auto h-10 w-10 text-zinc-500 group-hover:text-emerald-400 transition-colors"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    ></path>
+                  </svg>
+                  <p class="text-sm font-medium text-zinc-300">
+                    Haz clic o arrastra una imagen
+                  </p>
+                  <p class="text-xs text-zinc-500">
+                    Formatos recomendados: JPG, PNG, WEBP
+                  </p>
+                </div>
+              </div>
+              <div
+                id="file-preview-container"
+                class="hidden mt-4 p-3 bg-zinc-800/30 border border-zinc-800 rounded-xl items-center gap-3"
+              >
+                <img
+                  id="file-preview-img"
+                  class="w-12 h-12 object-cover rounded-lg"
+                />
+                <div class="flex-1 min-w-0">
+                  <p
+                    id="file-preview-name"
+                    class="text-xs font-medium text-zinc-300 truncate"
+                  >
+                  </p>
+                  <p id="file-preview-size" class="text-[10px] text-zinc-500">
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  id="remove-file-btn"
+                  class="p-1 text-zinc-500 hover:text-red-400 transition-colors"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    ><line x1="18" x2="6" y1="6" y2="18"></line><line
+                      x1="6"
+                      x2="18"
+                      y1="6"
+                      y2="18"></line></svg
+                  >
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              id="upload-btn"
+              class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] transition-all rounded-xl font-medium shadow-lg hover:shadow-emerald-500/25 flex items-center justify-center gap-2"
+            >
+              <span>Subir y Registrar</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Listado de la Galería -->
+        <div
+          class="lg:col-span-2 bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl flex flex-col min-h-[500px]"
+        >
+          <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
+          >
+            <h2 class="text-xl font-semibold flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                ><rect x="3" y="3" width="18" height="18" rx="2" ry="2"
+                ></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline
+                  points="21 15 16 10 5 21"></polyline></svg
+              >
+              Fotos Registradas
+            </h2>
+            <div class="relative w-full sm:w-64">
+              <input
+                type="text"
+                id="search-input"
+                class="w-full pl-10 pr-4 py-2 rounded-xl bg-zinc-800/40 border border-zinc-800 focus:border-emerald-500 focus:outline-none text-white text-sm transition-all placeholder-zinc-500"
+                placeholder="Buscar por título o descripción..."
+              />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="absolute left-3 top-2.5 h-4.5 w-4.5 text-zinc-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          <div
+            id="gallery-loading"
+            class="flex flex-col items-center justify-center py-20"
+          >
+            <svg
+              class="animate-spin h-10 w-10 text-emerald-500 mb-4"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+                fill="none"></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <p class="text-zinc-400 text-sm">Cargando fotos...</p>
+          </div>
+
+          <!-- Empty State -->
+          <div
+            id="gallery-empty"
+            class="hidden flex flex-col items-center justify-center py-20 text-center"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-16 w-16 text-zinc-700 mb-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              ></path>
+            </svg>
+            <h3 class="text-lg font-medium">No se encontraron fotos</h3>
+            <p class="text-zinc-500 mt-1 text-sm">
+              Intenta ajustar tu búsqueda o sube tu primera imagen.
+            </p>
+          </div>
+
+          <!-- Tabla de Contenidos -->
+          <div
+            id="gallery-table-container"
+            class="hidden overflow-x-auto flex-1"
+          >
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr
+                  class="border-b border-zinc-800 text-zinc-400 text-xs font-semibold uppercase tracking-wider"
+                >
+                  <th class="py-4 px-4 w-20">Vista</th>
+                  <th class="py-4 px-4">Detalles</th>
+                  <th class="py-4 px-4 w-28">Categoría</th>
+                  <th class="py-4 px-4 w-28 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody
+                id="gallery-tbody"
+                class="divide-y divide-zinc-800/50 text-sm"
+              >
+                <!-- Se inyecta dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal de Edición -->
+  <div
+    id="edit-modal"
+    class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+  >
+    <div
+      class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-lg w-full p-6 space-y-6 shadow-2xl relative"
+    >
+      <div class="flex justify-between items-center">
+        <h3 class="text-xl font-semibold text-emerald-400">
+          Editar Datos de Imagen
+        </h3>
+        <button
+          id="close-modal-btn"
+          class="p-1 rounded-lg text-zinc-400 hover:text-white transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            ><line x1="18" x2="6" y1="6" y2="18"></line><line
+              x1="6"
+              x2="18"
+              y1="6"
+              y2="18"></line></svg
+          >
+        </button>
+      </div>
+
+      <form id="edit-form" class="space-y-4">
+        <input type="hidden" id="edit-id" />
+        <div>
+          <label
+            for="edit-name"
+            class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2"
+            >Nombre / Título</label
+          >
+          <input
+            type="text"
+            id="edit-name"
+            required
+            class="w-full px-4 py-3 rounded-xl bg-zinc-800/40 border border-zinc-800 focus:border-emerald-500 focus:outline-none text-white text-sm"
+          />
+        </div>
+
+        <div>
+          <label
+            for="edit-desc"
+            class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2"
+            >Descripción</label
+          >
+          <textarea
+            id="edit-desc"
+            rows="3"
+            class="w-full px-4 py-3 rounded-xl bg-zinc-800/40 border border-zinc-800 focus:border-emerald-500 focus:outline-none text-white text-sm resize-none"
+          ></textarea>
+        </div>
+
+        <div>
+          <label
+            for="edit-category"
+            class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2"
+            >Categoría</label
+          >
+          <select
+            id="edit-category"
+            class="w-full px-4 py-3 rounded-xl bg-zinc-800/40 border border-zinc-800 focus:border-emerald-500 focus:outline-none text-white text-sm"
+          >
+            <option value="wallpaper">Wallpaper</option>
+            <option value="camara trampa">Cámara Trampa</option>
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+        >
+          <span>Guardar Cambios</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Contenedor Toast para Notificaciones -->
+  <div
+    id="toast-container"
+    class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"
+  >
+  </div>
+</Layout>
+
+<script>
+  import { supabase } from "../lib/supabase";
+
+  const loginContainer = document.getElementById("login-container");
+  const dashboardContainer = document.getElementById("dashboard-container");
+  const loginForm = document.getElementById("login-form");
+  const loginError = document.getElementById("login-error");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  const imgFileInput = document.getElementById("img-file");
+  const filePreviewContainer = document.getElementById("file-preview-container");
+  const filePreviewImg = document.getElementById("file-preview-img");
+  const filePreviewName = document.getElementById("file-preview-name");
+  const filePreviewSize = document.getElementById("file-preview-size");
+  const removeFileBtn = document.getElementById("remove-file-btn");
+
+  const uploadForm = document.getElementById("upload-form");
+  const uploadBtn = document.getElementById("upload-btn");
+  const galleryLoading = document.getElementById("gallery-loading");
+  const galleryEmpty = document.getElementById("gallery-empty");
+  const galleryTableContainer = document.getElementById("gallery-table-container");
+  const galleryTbody = document.getElementById("gallery-tbody");
+  const searchInput = document.getElementById("search-input");
+
+  const editModal = document.getElementById("edit-modal");
+  const editForm = document.getElementById("edit-form");
+  const editIdInput = document.getElementById("edit-id");
+  const editNameInput = document.getElementById("edit-name");
+  const editDescInput = document.getElementById("edit-desc");
+  const editCategorySelect = document.getElementById("edit-category");
+  const closeModalBtn = document.getElementById("close-modal-btn");
+
+  let photosList = [];
+
+  // --- Toast ---
+  function showToast(message, type = "success") {
+    const container = document.getElementById("toast-container");
+    if (!container) return;
+
+    const toast = document.createElement("div");
+    toast.className = `flex items-center gap-3 px-5 py-3.5 rounded-2xl border text-sm font-medium shadow-2xl transition-all duration-300 transform translate-y-2 opacity-0 ${
+      type === "success"
+        ? "bg-emerald-950/80 border-emerald-500/30 text-emerald-200"
+        : "bg-red-950/80 border-red-500/30 text-red-200"
+    }`;
+
+    const icon =
+      type === "success"
+        ? '<svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
+        : '<svg class="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+
+    toast.innerHTML = `${icon}<span>${message}</span>`;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.remove("translate-y-2", "opacity-0");
+    }, 10);
+
+    setTimeout(() => {
+      toast.classList.add("translate-y-2", "opacity-0");
+      setTimeout(() => toast.remove(), 300);
+    }, 4000);
+  }
+
+  // --- Auth (Supabase Auth) ---
+
+  async function initAuth() {
+    const { data: authData } = await supabase.auth.getSession();
+    if (authData?.session) {
+      showDashboard();
+      loadPhotos();
+    }
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        showDashboard();
+        loadPhotos();
+      } else if (event === "SIGNED_OUT") {
+        showLogin();
+      }
+    });
+  }
+
+  function showLogin() {
+    loginContainer?.classList.remove("hidden");
+    dashboardContainer?.classList.add("hidden");
+    editModal?.classList.add("hidden");
+  }
+
+  function showDashboard() {
+    loginContainer?.classList.add("hidden");
+    dashboardContainer?.classList.remove("hidden");
+  }
+
+  loginForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const btn = document.getElementById("login-btn");
+
+    if (!email || !password) return;
+
+    const emailVal = email.value.trim();
+    const passVal = password.value;
+
+    if (!emailVal || !passVal) return;
+
+    try {
+      if (btn) btn.innerHTML = "Verificando...";
+      loginError?.classList.add("hidden");
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email: emailVal,
+        password: passVal,
+      });
+
+      if (error) throw error;
+
+      showToast("Inicio de sesión exitoso");
+    } catch (err) {
+      console.error("Login error:", err);
+      loginError?.classList.remove("hidden");
+      showToast("Credenciales incorrectas. Verifica tu correo y contraseña.", "error");
+    } finally {
+      if (btn) btn.innerHTML = "Acceder al Panel";
+    }
+  });
+
+  logoutBtn?.addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    loginError?.classList.add("hidden");
+    showToast("Sesión cerrada");
+  });
+
+  // --- File Preview ---
+
+  imgFileInput?.addEventListener("change", () => {
+    const file = imgFileInput.files?.[0];
+    if (file) {
+      filePreviewImg.src = URL.createObjectURL(file);
+      filePreviewName.textContent = file.name;
+      filePreviewSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+      filePreviewContainer?.classList.remove("hidden");
+      filePreviewContainer?.classList.add("flex");
+    }
+  });
+
+  removeFileBtn?.addEventListener("click", () => {
+    imgFileInput.value = "";
+    filePreviewContainer?.classList.add("hidden");
+    filePreviewContainer?.classList.remove("flex");
+  });
+
+  // --- Load Photos ---
+
+  async function loadPhotos() {
+    galleryLoading?.classList.remove("hidden");
+    galleryTableContainer?.classList.add("hidden");
+    galleryEmpty?.classList.add("hidden");
+
+    try {
+      const { data, error } = await supabase
+        .from("galeria_fotos")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      photosList = data || [];
+      renderPhotos(photosList);
+    } catch (err) {
+      console.error("Error loading gallery:", err);
+      showToast("Error al cargar la galería", "error");
+    } finally {
+      galleryLoading?.classList.add("hidden");
+    }
+  }
+
+  // --- Render Photos (XSS-safe) ---
+
+  function renderPhotos(photos) {
+    if (!galleryTbody) return;
+    galleryTbody.innerHTML = "";
+
+    if (photos.length === 0) {
+      galleryEmpty?.classList.remove("hidden");
+      galleryTableContainer?.classList.add("hidden");
+      return;
+    }
+
+    galleryEmpty?.classList.add("hidden");
+    galleryTableContainer?.classList.remove("hidden");
+
+    photos.forEach((photo) => {
+      const tr = document.createElement("tr");
+      tr.className = "border-b border-zinc-800/40 hover:bg-zinc-800/20 transition-all";
+
+      // Image cell
+      const imgTd = document.createElement("td");
+      imgTd.className = "py-4 px-4";
+      const img = document.createElement("img");
+      img.src = photo.url_imagen;
+      img.alt = photo.nombre || "";
+      img.className = "w-12 h-12 object-cover rounded-lg border border-zinc-800";
+      img.loading = "lazy";
+      imgTd.appendChild(img);
+      tr.appendChild(imgTd);
+
+      // Details cell
+      const detailsTd = document.createElement("td");
+      detailsTd.className = "py-4 px-4 max-w-xs";
+      const nameDiv = document.createElement("div");
+      nameDiv.className = "font-semibold text-zinc-100 truncate";
+      nameDiv.textContent = photo.nombre || "Sin título";
+      detailsTd.appendChild(nameDiv);
+      const descDiv = document.createElement("div");
+      descDiv.className = "text-xs text-zinc-500 truncate mt-0.5";
+      descDiv.textContent = photo.descripcion || "Sin descripción";
+      detailsTd.appendChild(descDiv);
+      tr.appendChild(detailsTd);
+
+      // Category cell
+      const catTd = document.createElement("td");
+      catTd.className = "py-4 px-4";
+      const catSpan = document.createElement("span");
+      catSpan.className = `px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider rounded-full ${
+        photo.categoria === "wallpaper"
+          ? "bg-emerald-950/50 border border-emerald-500/20 text-emerald-400"
+          : "bg-blue-950/50 border border-blue-500/20 text-blue-400"
+      }`;
+      catSpan.textContent = photo.categoria;
+      catTd.appendChild(catSpan);
+      tr.appendChild(catTd);
+
+      // Actions cell
+      const actionsTd = document.createElement("td");
+      actionsTd.className = "py-4 px-4 text-right";
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "edit-btn px-2.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold transition-all inline-flex items-center gap-1";
+      editBtn.textContent = "Editar";
+      editBtn.addEventListener("click", () => openEditModal(photo));
+      actionsTd.appendChild(editBtn);
+
+      actionsTd.appendChild(document.createTextNode(" "));
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "delete-btn px-2.5 py-1.5 rounded-lg bg-red-950/50 border border-red-500/30 hover:bg-red-900/40 text-red-300 text-xs font-semibold transition-all inline-flex items-center gap-1";
+      deleteBtn.textContent = "Eliminar";
+      deleteBtn.addEventListener("click", () => deletePhoto(photo.id, photo.url_imagen));
+      actionsTd.appendChild(deleteBtn);
+
+      tr.appendChild(actionsTd);
+      galleryTbody.appendChild(tr);
+    });
+  }
+
+  // --- Search ---
+
+  searchInput?.addEventListener("input", (e) => {
+    const query = e.target.value.toLowerCase();
+    const filtered = photosList.filter(
+      (photo) =>
+        (photo.nombre && photo.nombre.toLowerCase().includes(query)) ||
+        (photo.descripcion && photo.descripcion.toLowerCase().includes(query))
+    );
+    renderPhotos(filtered);
+  });
+
+  // --- Upload with Validation ---
+
+  const MAX_FILE_SIZE = 10 * 1024 * 1024;
+  const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
+
+  uploadForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const nameEl = document.getElementById("img-name");
+    const descEl = document.getElementById("img-desc");
+    const categoryEl = document.getElementById("img-category");
+
+    if (!nameEl || !imgFileInput.files || imgFileInput.files.length === 0) {
+      showToast("Por favor, selecciona un archivo", "error");
+      return;
+    }
+
+    const file = imgFileInput.files[0];
+
+    // --- File Validation ---
+    if (file.size > MAX_FILE_SIZE) {
+      showToast("El archivo excede el límite de 10 MB", "error");
+      return;
+    }
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      showToast("Formato no permitido. Usa JPG, PNG, WEBP, AVIF o GIF", "error");
+      return;
+    }
+
+    const nameVal = nameEl.value.trim();
+    const descVal = descEl.value.trim();
+
+    if (!nameVal) {
+      showToast("El nombre/título es obligatorio", "error");
+      return;
+    }
+
+    // --- Filename Sanitization ---
+    const cleanedName = file.name
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z0-9._-]/g, "_")
+      .replace(/_{2,}/g, "_")
+      .replace(/^_+|_+$/g, "");
+
+    const fileName = `${Date.now()}_${cleanedName}`;
+    const filePath = `Wallpapers/${fileName}`;
+
+    if (uploadBtn) uploadBtn.innerHTML = "Subiendo imagen...";
+
+    try {
+      const { error: uploadError } = await supabase.storage
+        .from("Galeria_QR")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const storageUrl = import.meta.env.PUBLIC_SUPABASE_URL.replace(/\/$/, '');
+      const publicUrl = `${storageUrl}/storage/v1/object/public/Galeria_QR/${filePath}`;
+
+      const { error: dbError } = await supabase.from("galeria_fotos").insert([
+        {
+          nombre: nameVal,
+          descripcion: descVal,
+          categoria: categoryEl.value,
+          url_imagen: publicUrl,
+        },
+      ]);
+
+      if (dbError) throw dbError;
+
+      showToast("Imagen subida y registrada exitosamente");
+
+      uploadForm.reset();
+      imgFileInput.value = "";
+      filePreviewContainer?.classList.add("hidden");
+
+      loadPhotos();
+    } catch (err) {
+      console.error("Upload error:", err);
+      showToast("Error al subir la imagen. Intenta de nuevo.", "error");
+    } finally {
+      if (uploadBtn) uploadBtn.innerHTML = "Subir y Registrar";
+    }
+  });
+
+  // --- Edit Modal ---
+
+  function openEditModal(photo) {
+    if (!editModal) return;
+    editIdInput.value = photo.id;
+    editNameInput.value = photo.nombre || "";
+    editDescInput.value = photo.descripcion || "";
+    editCategorySelect.value = photo.categoria || "wallpaper";
+    editModal.classList.remove("hidden");
+  }
+
+  closeModalBtn?.addEventListener("click", () => {
+    editModal?.classList.add("hidden");
+  });
+
+  editForm?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const id = editIdInput.value;
+    const nombre = editNameInput.value.trim();
+    const descripcion = editDescInput.value.trim();
+    const categoria = editCategorySelect.value;
+
+    if (!nombre) {
+      showToast("El nombre/título es obligatorio", "error");
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("galeria_fotos")
+        .update({ nombre, descripcion, categoria })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      showToast("Imagen actualizada correctamente");
+      editModal?.classList.add("hidden");
+      loadPhotos();
+    } catch (err) {
+      console.error("Update error:", err);
+      showToast("Error al actualizar la imagen", "error");
+    }
+  });
+
+  // --- Delete ---
+
+  async function deletePhoto(id, url) {
+    if (
+      !confirm("¿Estás seguro de que deseas eliminar esta imagen de la galería?")
+    )
+      return;
+
+    try {
+      if (url.includes("Galeria_QR/Wallpapers/")) {
+        const parts = url.split("Galeria_QR/");
+        if (parts.length > 1) {
+          const filePath = parts[1];
+          await supabase.storage.from("Galeria_QR").remove([filePath]);
+        }
+      }
+
+      const { error } = await supabase
+        .from("galeria_fotos")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      showToast("Imagen eliminada correctamente");
+      loadPhotos();
+    } catch (err) {
+      console.error("Delete error:", err);
+      showToast("Error al eliminar la imagen", "error");
+    }
+  }
+
+  // --- Init ---
+  initAuth();
+</script>

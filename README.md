@@ -1,48 +1,33 @@
-<<<<<<< HEAD
-# Astro Starter Kit: Minimal
-
-```sh
-pnpm create astro@latest -- --template minimal
-```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-=======
 # qr_monitoreo
-Sitio para mostrar archivos y contenido de ronap a travez de un QR
->>>>>>> 7931382411e80fe83dab8ffd860f76e955f20c80
+
+Sitio para mostrar archivos y contenido de RONAP a través de un QR.
+
+## 🚀 Stack
+
+- **Astro** — Framework web
+- **TypeScript** — Tipado estático
+- **Tailwind CSS v4** — Estilos utilitarios
+- **Supabase** — Backend (PostgreSQL + Storage + Auth)
+
+## 🧞 Comandos
+
+| Comando             | Acción                                |
+| :------------------ | :------------------------------------ |
+| `pnpm install`      | Instalar dependencias                 |
+| `pnpm dev`          | Iniciar servidor de desarrollo        |
+| `pnpm build`        | Compilar para producción              |
+| `pnpm preview`      | Previsualizar build local             |
+
+## 🔐 Seguridad
+
+Este proyecto utiliza **Supabase Auth** para autenticación y **Row Level Security (RLS)** para proteger los datos.  
+Ejecuta `supabase-rls.sql` en el SQL Editor de Supabase para habilitar las políticas de seguridad.
+
+## 📁 Variables de Entorno
+
+Copia `.env.example` a `.env` y completa las credenciales de Supabase:
+
+```
+PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=tu-anon-key
+```
